@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./data/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js  # For seeding
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/pokecarddb
+  frontend:
+    build: ./frontend
+    ports:
+      - "4200:80" 
+    depends_on:
+      - backend
+volumes:
+  mongo-data:
